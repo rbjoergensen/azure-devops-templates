@@ -11,6 +11,7 @@ resources:
   - repository: templates
     type: github
     name: rbjoergensen/azure-devops-templates
+    endpoint: github
 
 stages:
 - template: /terraform/main.yml@templates
