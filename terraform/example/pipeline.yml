@@ -19,6 +19,6 @@ stages:
     environment: test
     workingdir: $(System.DefaultWorkingDirectory)/terraform/example
     connection: aws-callofthevoid
-    statefile: example.tfstate
+    statefile: cotv-test-bucket.tfstate
     aws_region: eu-central-1
     aws_bucket: callofthevoid-terraform-statefiles
