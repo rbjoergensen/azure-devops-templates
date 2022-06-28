@@ -44,6 +44,7 @@ stages:
         displayName: Plan
         inputs:
           command: plan
+          publishPlanResults: plan_results
           workingDirectory: $(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}
           allowTelemetryCollection: false
           providerServiceAws: ${{ parameters.connection }}
