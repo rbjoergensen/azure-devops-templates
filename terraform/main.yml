@@ -104,3 +104,13 @@ stages:
                 allowTelemetryCollection: false
                 backendType: aws
                 backendServiceAws: ${{ parameters.connection }}
+
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: apply
+                workingDirectory: $(Pipeline.Workspace)/terraform
+                allowTelemetryCollection: false
+                providerServiceAws: ${{ parameters.connection }}
+                providerAwsRegion: ${{ parameters.aws_region }}
+                commandOptions: ${{ parameters.options }}
