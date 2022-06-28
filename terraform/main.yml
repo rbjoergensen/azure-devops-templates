@@ -55,7 +55,10 @@ stages:
         name: tf_changes_present
         inputs:
           targetType: inline
-          script: Write-Host "##vso[task.setvariable variable=plan_has_changes;isOutput=true]$env:TERRAFORM_PLAN_HAS_CHANGES"
+          script: |
+            Write-Host "TERRAFORM_PLAN_HAS_CHANGES: $($env:TERRAFORM_PLAN_HAS_CHANGES)"
+            Write-Host "TERRAFORM_LAST_EXITCODE: $($env:TERRAFORM_LAST_EXITCODE)"
+            Write-Host "##vso[task.setvariable variable=plan_has_changes;isOutput=true]$env:TERRAFORM_PLAN_HAS_CHANGES"
 
       - task: CopyFiles@2
         displayName: Copy artifacts
