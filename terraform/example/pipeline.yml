@@ -19,3 +19,4 @@ stages:
     environment: test
     workingdir: terraform/example
     connection: aws-callofthevoid
+    aws_region: eu-central-1
