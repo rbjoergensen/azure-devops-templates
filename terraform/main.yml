@@ -1,4 +1,7 @@
-# Based on this extension https://marketplace.visualstudio.com/items?itemName=charleszipp.azure-pipelines-tasks-terraform
+# Based on these extensions 
+# https://marketplace.visualstudio.com/items?itemName=charleszipp.azure-pipelines-tasks-terraform
+# https://marketplace.visualstudio.com/acquisition?itemName=ms-devlabs.custom-terraform-tasks
+# https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools
 parameters:
 - name: environment
   type: string
@@ -37,6 +40,7 @@ stages:
         inputs:
           command: init
           workingDirectory: $(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}
+          allowTelemetryCollection: false
           backendType: aws
           backendServiceAws: ${{ parameters.connection }}
           backendAwsRegion: ${{ parameters.aws_region }}
@@ -49,6 +53,7 @@ stages:
         inputs:
           command: plan
           workingDirectory: '$(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}'
+          allowTelemetryCollection: false
           environmentServiceName: ${{ parameters.connection }}
           commandOptions: '-out=tfplan ${{ parameters.options }}'
 
@@ -93,6 +98,7 @@ stages:
               inputs:
                 command: init
                 workingDirectory: $(Pipeline.Workspace)/terraform/${{ parameters.workingdir }}
+                allowTelemetryCollection: false
                 backendType: aws
                 backendServiceAws: ${{ parameters.connection }}
                 backendAwsRegion: ${{ parameters.aws_region }}
