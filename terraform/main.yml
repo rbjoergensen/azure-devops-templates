@@ -1,3 +1,4 @@
+# Based on this extension https://marketplace.visualstudio.com/items?itemName=charleszipp.azure-pipelines-tasks-terraform
 parameters:
 - name: environment
   type: string
@@ -14,6 +15,12 @@ parameters:
 - name: options
   type: string
   default:
+- name: aws_region
+  type: string
+  default:
+- name: aws_bucket
+  type: string
+  default:
 
 stages:
 - stage: plan
@@ -25,26 +32,24 @@ stages:
   - job: terraform
     displayName: Terraform
     steps:
-      - task: TerraformTaskV2@2
-        displayName: 'Terraform init'
+      - task: TerraformCLI@0
+        displayName: Init
         inputs:
-          provider: azurerm
           command: init
-          workingDirectory: '$(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}'
-          backendServiceArm: azure
-          backendAzureRmResourceGroupName: terraform
-          backendAzureRmStorageAccountName: terraformstate
-          backendAzureRmContainerName: tfstate
-          backendAzureRmKey: ${{ parameters.statefile }}
+          workingDirectory: $(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}
+          backendType: aws
+          backendServiceAws: ${{ parameters.connection }}
+          backendAwsRegion: ${{ parameters.aws_region }}
+          backendAwsBucket: ${{ parameters.aws_bucket }}
+          backendAwsKey: ${{ parameters.statefile }}
           commandOptions: --upgrade
 
-      - task: TerraformTaskV2@2
-        displayName: 'Terraform plan'
+      - task: TerraformCLI@0
+        displayName: Plan
         inputs:
-          provider: azurerm
           command: plan
           workingDirectory: '$(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}'
-          environmentServiceNameAzureRM: '${{ parameters.connection }}'
+          environmentServiceName: ${{ parameters.connection }}
           commandOptions: '-out=tfplan ${{ parameters.options }}'
 
       - task: CopyFiles@2
@@ -62,6 +67,14 @@ stages:
           PathtoPublish: $(Build.ArtifactStagingDirectory)
           artifactName: terraform
 
+#- task: TerraformCLI@0
+#  displayName: 'terraform apply'
+#  condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'))
+#  inputs:
+#    command: apply
+#    environmentServiceName: 'My Azure Service Connection'
+#    commandOptions: '$(System.DefaultWorkingDirectory)/terraform.tfplan'
+
 - stage: apply
   displayName: Apply
   dependsOn: plan
@@ -75,14 +88,14 @@ stages:
       runOnce:
         deploy:
           steps:
-            - task: TerraformTaskV2@2
-              displayName: 'Terraform init'
+            - task: TerraformCLI@0
+              displayName: Init
               inputs:
-                provider: azurerm
                 command: init
-                workingDirectory: '$(Pipeline.Workspace)/terraform/${{ parameters.workingdir }}'
-                backendServiceArm: azure
-                backendAzureRmResourceGroupName: terraform
-                backendAzureRmStorageAccountName: terraformstate
-                backendAzureRmContainerName: tfstate
-                backendAzureRmKey: ${{ parameters.statefile }}
+                workingDirectory: $(Pipeline.Workspace)/terraform/${{ parameters.workingdir }}
+                backendType: aws
+                backendServiceAws: ${{ parameters.connection }}
+                backendAwsRegion: ${{ parameters.aws_region }}
+                backendAwsBucket: ${{ parameters.aws_bucket }}
+                backendAwsKey: ${{ parameters.statefile }}
+                commandOptions: --upgrade
