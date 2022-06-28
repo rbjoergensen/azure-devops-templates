@@ -14,11 +14,33 @@ resources:
     endpoint: github
 
 stages:
-- template: /terraform/main.yml@templates
-  parameters:
-    environment: test
-    workingdir: $(System.DefaultWorkingDirectory)/terraform/example
-    connection: aws-callofthevoid
-    statefile: cotv-test-bucket.tfstate
-    aws_region: eu-central-1
-    aws_bucket: callofthevoid-terraform-statefiles
+- stage: plan
+  displayName: Plan
+  dependsOn:
+  pool:
+    vmImage: ubuntu-latest
+  jobs:
+  - job: terraform
+    displayName: Terraform
+    steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: init
+          workingDirectory: $(System.DefaultWorkingDirectory)/terraform/example
+          allowTelemetryCollection: false
+          backendType: aws
+          backendServiceAws: aws-callofthevoid
+          backendAwsRegion: eu-central-1
+          backendAwsBucket: callofthevoid-terraform-statefiles
+          backendAwsKey: cotv-test-bucket.tfstate
+          commandOptions: --upgrade
+
+#- template: /terraform/main.yml@templates
+#  parameters:
+#    environment: test
+#    workingdir: $(System.DefaultWorkingDirectory)/terraform/example
+#    connection: aws-callofthevoid
+#    statefile: cotv-test-bucket.tfstate
+#    aws_region: eu-central-1
+#    aws_bucket: callofthevoid-terraform-statefiles
