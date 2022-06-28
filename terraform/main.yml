@@ -90,8 +90,7 @@ stages:
               displayName: Init
               inputs:
                 command: init
-                workingDirectory: $(Pipeline.Workspace)/terraform/${{ parameters.workingdir }}
+                workingDirectory: $(Pipeline.Workspace)/terraform
                 allowTelemetryCollection: false
                 backendType: aws
                 backendServiceAws: ${{ parameters.connection }}
-                commandOptions: --upgrade
