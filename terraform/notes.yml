@@ -1,0 +1,55 @@
+stages:
+- stage: 'plan'
+  displayName: "Plan"
+  dependsOn:
+  pool:
+    vmImage: ubuntu-latest
+  variables:
+    - ${{ if eq(parameters.includeaws, true) }}:
+      - group: aws_credentials
+  jobs:
+  - job: terraform
+    displayName: Terraform
+    steps:     
+      - task: PowerShell@2
+        displayName: Check for changes
+        name: tf_changes_present
+        inputs:
+          targetType: inline
+          script: |
+            Write-Host "##vso[task.setvariable variable=apply;isOutput=true]$env:TERRAFORMTASKV22_CHANGESPRESENT"
+            Write-Host "##vso[task.setvariable variable=tf_changes_present]$env:TERRAFORMTASKV22_CHANGESPRESENT"
+
+      - task: CopyFiles@2
+        displayName: 'Copy artifacts'
+        condition: eq(variables['tf_changes_present'], 'true')
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)'
+          Contents: |
+            terraform/**
+            !${{ parameters.workingdir }}/.terraform/**
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish artifacts"
+        condition: eq(variables.tf_changes_present, 'true')
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: terraform
+
+- stage: 'apply'
+  displayName: 'Apply'
+  dependsOn: 'plan'
+  condition: eq(stageDependencies.plan.outputs['terraform.tf_changes_present.apply'], 'true')
+  pool:
+    vmImage: ubuntu-latest
+  variables:
+    - group: aws_credentials
+  jobs:
+  - deployment: terraform
+    displayName: Terraform
+    environment: ${{ parameters.environment }}
+    strategy: 
+      runOnce:
+        deploy:
+          steps:

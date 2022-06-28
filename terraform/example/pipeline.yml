@@ -1,0 +1,21 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - terraform/example/**
+
+resources:
+  repositories:
+  - repository: templates
+    type: github
+    name: rbjoergensen/azure-devops-templates
+
+stages:
+- template: /terraform/main.yml@templates
+  parameters:
+    environment: test
+    workingdir: $(System.DefaultWorkingDirectory)/terraform/example
+    connection: aws-callofthevoid
+    statefile: example.tfstate
