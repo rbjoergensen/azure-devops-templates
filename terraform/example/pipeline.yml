@@ -26,15 +26,12 @@ stages:
       - task: TerraformCLI@0
         displayName: Init
         inputs:
-          command: init
-          workingDirectory: $(System.DefaultWorkingDirectory)/terraform/example
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/example'
+          commandOptions: '--upgrade'
+          backendType: 'aws'
           allowTelemetryCollection: false
-          backendType: aws
-          backendServiceAws: aws-callofthevoid
-          backendAwsRegion: eu-central-1
-          backendAwsBucket: callofthevoid-terraform-statefiles
-          backendAwsKey: cotv-test-bucket.tfstate
-          commandOptions: --upgrade
+          backendServiceAws: 'aws-callofthevoid'
 
 #- template: /terraform/main.yml@templates
 #  parameters:
