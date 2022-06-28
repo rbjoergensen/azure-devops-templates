@@ -12,16 +12,7 @@ parameters:
 - name: connection
   type: string
   default:
-- name: statefile
-  type: string
-  default:
 - name: options
-  type: string
-  default:
-- name: aws_region
-  type: string
-  default:
-- name: aws_bucket
   type: string
   default:
 
@@ -43,9 +34,6 @@ stages:
           allowTelemetryCollection: false
           backendType: aws
           backendServiceAws: ${{ parameters.connection }}
-          backendAwsRegion: ${{ parameters.aws_region }}
-          backendAwsBucket: ${{ parameters.aws_bucket }}
-          backendAwsKey: ${{ parameters.statefile }}
           commandOptions: --upgrade
 
       - task: TerraformCLI@0
@@ -55,7 +43,6 @@ stages:
           workingDirectory: $(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}
           allowTelemetryCollection: false
           providerServiceAws: ${{ parameters.connection }}
-          providerAwsRegion: ${{ parameters.aws_region }}
           commandOptions: -out=tfplan ${{ parameters.options }}
 
       - task: CopyFiles@2
@@ -102,7 +89,4 @@ stages:
                 allowTelemetryCollection: false
                 backendType: aws
                 backendServiceAws: ${{ parameters.connection }}
-                backendAwsRegion: ${{ parameters.aws_region }}
-                backendAwsBucket: ${{ parameters.aws_bucket }}
-                backendAwsKey: ${{ parameters.statefile }}
                 commandOptions: --upgrade
