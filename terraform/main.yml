@@ -52,10 +52,11 @@ stages:
         displayName: Plan
         inputs:
           command: plan
-          workingDirectory: '$(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}'
+          workingDirectory: $(System.DefaultWorkingDirectory)/${{ parameters.workingdir }}
           allowTelemetryCollection: false
-          environmentServiceName: ${{ parameters.connection }}
-          commandOptions: '-out=tfplan ${{ parameters.options }}'
+          providerServiceAws: ${{ parameters.connection }}
+          providerAwsRegion: ${{ parameters.aws_region }}
+          commandOptions: -out=tfplan ${{ parameters.options }}
 
       - task: CopyFiles@2
         displayName: Copy artifacts
