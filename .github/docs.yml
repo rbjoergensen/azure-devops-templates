@@ -1,0 +1,6 @@
+navigatorName: Azure DevOps pipeline template library
+category: Azure DevOps
+includeLink: true
+files:
+- file: Readme.md
+  prettyName: Readme

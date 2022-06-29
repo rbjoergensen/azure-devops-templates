@@ -1,6 +1,5 @@
 # Based on these extensions 
 # https://marketplace.visualstudio.com/items?itemName=charleszipp.azure-pipelines-tasks-terraform
-# https://marketplace.visualstudio.com/acquisition?itemName=ms-devlabs.custom-terraform-tasks
 # https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools
 parameters:
 - name: environment
@@ -77,14 +76,6 @@ stages:
         inputs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)
           artifactName: terraform
-
-#- task: TerraformCLI@0
-#  displayName: 'terraform apply'
-#  condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'))
-#  inputs:
-#    command: apply
-#    environmentServiceName: 'My Azure Service Connection'
-#    commandOptions: '$(System.DefaultWorkingDirectory)/terraform.tfplan'
 
 - stage: apply
   displayName: Apply
