@@ -8,16 +8,17 @@ The reason it is split into two is so that the apply stage can have additional v
 It also makes it simpler visually as the template will skip the upload of artifacts and the apply stage if there are no changes to be made.
 <br/><br/>
 The template currently only works with the AWS provider.
+
 #### Parameters
 The templates takes the following parameters.
 
-|Name       |Default                          |Description|
-|-----------|---------------------------------|-----------|
-|environment|                                 |The Azure environment to use in the apply stage|
-|workingdir |$(System.DefaultWorkingDirectory)|The working directory of the Terraform workspace|
-|connection |                                 |The service connection for AWS or Azure|
-|options    |                                 |Additional commandline options such as variables or other Terraform parameters|
-|aws_region |                                 |The default AWS region|
+|Name         |Description|Default value|
+|:------------|:----------|:------------|
+|`environment`|The Azure environment to use in the apply stage|`null`|
+|`workingdir` |The working directory of the Terraform workspace|$(System.DefaultWorkingDirectory)|
+|`connection` |The service connection for AWS or Azure|`null`|
+|`options`    |Additional commandline options such as variables or other Terraform parameters|`null`|
+|`aws_region` |The default AWS region|`null`|
 
 #### Example
 A pipeline for deploying a Terraform configuration would look like this.
